@@ -462,9 +462,9 @@ Las contribuciones son bienvenidas. Para contribuir:
 
 ## 📄 Licencia
 
-Este proyecto está bajo la **Licencia de Master Systems JLC**.
+Este proyecto está bajo la **Licencia de Master & Systems JLC**.
 
-Copyright (c) 2026 Jose Luis Cajahuanca - Master Systems JLC
+Copyright (c) 2026 Jose Luis Cajahuanca - Master & Systems JLC
 
 Todos los derechos reservados. El uso de este software está sujeto a los términos y condiciones establecidos por el autor.
 
@@ -511,7 +511,7 @@ Este sistema fue desarrollado como una solución integral para la gestión escol
 
 **Hecho con ❤️ para la educación peruana**
 
-**Master Systems JLC © 2026**
+**Master & Systems JLC © 2026**
 
 [⬆ Volver arriba](#-sistema-de-gestión-escolar---versión-10)
 
