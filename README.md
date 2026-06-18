@@ -128,57 +128,28 @@ Sistema completo de gestión escolar desarrollado con **FastAPI** (backend) y **
 ## 📁 Estructura del Proyecto
 
 ```
-school-api/
-├── main.py                      # Punto de entrada FastAPI + CORS
-├── database.py                  # Configuración de base de datos
-├── models.py                    # Modelos SQLAlchemy
-├── schemas.py                   # Esquemas Pydantic
-├── dependencies.py              # Funciones de seguridad y JWT
-├── colegio.db                   # Base de datos SQLite (auto-generada)
-├── requirements.txt             # Dependencias Python
+D:\school-api\
+├── 📁 backend/          ← Backend completo (FastAPI + scripts)
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   ├── schemas.py
+│   ├── dependencies.py
+│   ├── requirements.txt
+│   ├── routers/ (6 módulos)
+│   └── scripts/ (4 scripts)
 │
-├── routers/                     # Endpoints organizados por módulo
-│   ├── __init__.py
-│   ├── auth.py                  # Autenticación y usuarios
-│   ├── teachers.py              # Gestión de profesores
-│   ├── students.py              # Gestión de alumnos
-│   ├── grades.py                # Calificaciones
-│   ├── attendance.py            # Control de asistencia
-│   └── reports.py               # Reportes y estadísticas
-│
-├── scripts/                     # Scripts auxiliares
-│   ├── crear_admin.py           # Crear usuario admin
-│   ├── registrar_usuarios.py    # Registro masivo de usuarios
-│   ├── cargar_colegio.py        # Carga inicial de datos
-│   └── ver_usuarios.py          # Ver usuarios registrados
-│
-├── frontend/                    # Aplicación React
+├── 📁 frontend/         ← Frontend completo (React + Tailwind)
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Navbar.jsx       # Barra de navegación
-│   │   │   ├── Sidebar.jsx      # Menú lateral
-│   │   │   └── ProtectedRoute.jsx
-│   │   ├── pages/
-│   │   │   ├── Login.jsx        # Página de login
-│   │   │   ├── Dashboard.jsx    # Panel principal
-│   │   │   ├── Teachers.jsx     # Gestión de profesores
-│   │   │   ├── Students.jsx     # Gestión de alumnos
-│   │   │   ├── Grades.jsx       # Calificaciones
-│   │   │   ├── Attendance.jsx   # Asistencia
-│   │   │   └── Reports.jsx      # Reportes
+│   │   ├── pages/ (7 páginas)
 │   │   ├── services/
-│   │   │   └── api.js           # Configuración Axios
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx  # Contexto de autenticación
-│   │   ├── App.jsx              # Componente principal
-│   │   ├── main.jsx             # Punto de entrada React
-│   │   └── index.css            # Estilos globales + Tailwind
+│   │   └── context/
 │   ├── package.json
-│   ├── tailwind.config.js
-│   └── vite.config.js
+│   └── tailwind.config.js
 │
-└── README.md                    # Este archivo
-```
+├── 📄 .gitignore
+└── 📄 README.md
 
 ---
 
@@ -210,6 +181,7 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # Instalar dependencias
+cd backend
 pip install -r requirements.txt
 
 # ⚠️ IMPORTANTE: Instalar versión específica de bcrypt
@@ -287,7 +259,7 @@ Antes de desplegar en producción:
 ### 1. Iniciar Backend
 
 ```bash
-# Desde la raíz del proyecto
+cd backend
 uvicorn main:app --reload
 ```
 
