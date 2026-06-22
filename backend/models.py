@@ -41,6 +41,7 @@ class TeacherDB(Base):
 class StudentDB(Base):
     __tablename__ = "students"
     id = Column(Integer, primary_key=True, index=True)
+    dni = Column(String(8), unique=True, index=True, nullable=False)  # 🆕 DNI del estudiante
     name = Column(String, index=True)
     level = Column(Enum(NivelEscolar))
     grade_level = Column(String)

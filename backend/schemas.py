@@ -3,7 +3,7 @@ from typing import List, Optional
 from datetime import date
 from models import NivelEscolar, EstadoAsistencia, RolUsuario
 
-# Usuarios
+# ============ USUARIOS ============
 class UserCreate(BaseModel):
     username: str
     email: str
@@ -25,7 +25,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-# Profesores
+# ============ PROFESORES ============
 class TeacherCreate(BaseModel):
     name: str
     subject: str
@@ -36,8 +36,12 @@ class TeacherResponse(BaseModel):
     subject: str
     model_config = ConfigDict(from_attributes=True)
 
-# Alumnos
+class TeacherBulkCreate(BaseModel):
+    teachers: List[TeacherCreate]
+
+# ============ ALUMNOS ============
 class StudentCreate(BaseModel):
+    dni: str  # 🆕 DNI del estudiante
     name: str
     level: NivelEscolar
     grade_level: str
@@ -45,6 +49,7 @@ class StudentCreate(BaseModel):
 
 class StudentResponse(BaseModel):
     id: int
+    dni: str  # 🆕 DNI del estudiante
     name: str
     level: str
     grade_level: str
@@ -52,7 +57,10 @@ class StudentResponse(BaseModel):
     grades: List[dict] = []
     model_config = ConfigDict(from_attributes=True)
 
-# Calificaciones
+class StudentBulkCreate(BaseModel):
+    students: List[StudentCreate]
+
+# ============ CALIFICACIONES ============
 class GradeCreate(BaseModel):
     subject: str
     score: float
@@ -65,7 +73,16 @@ class GradeResponse(BaseModel):
     period: str
     model_config = ConfigDict(from_attributes=True)
 
-# Asistencia
+class GradeBulkItem(BaseModel):
+    student_id: int
+    subject: str
+    score: float
+    period: str
+
+class GradeBulkCreate(BaseModel):
+    grades: List[GradeBulkItem]
+
+# ============ ASISTENCIA ============
 class AttendanceCreate(BaseModel):
     student_id: int
     date: date
@@ -80,19 +97,3 @@ class AttendanceBulkItem(BaseModel):
 class AttendanceBulkCreate(BaseModel):
     date: date
     records: List[AttendanceBulkItem]
-
-# Registros masivos
-class TeacherBulkCreate(BaseModel):
-    teachers: List[TeacherCreate]
-
-class StudentBulkCreate(BaseModel):
-    students: List[StudentCreate]
-
-class GradeBulkItem(BaseModel):
-    student_id: int
-    subject: str
-    score: float
-    period: str
-
-class GradeBulkCreate(BaseModel):
-    grades: List[GradeBulkItem]

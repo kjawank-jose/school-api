@@ -20,6 +20,7 @@ const Students = () => {
   const [filterGrade, setFilterGrade] = useState("");
   const [error, setError] = useState(null);
   const [newStudent, setNewStudent] = useState({
+    dni: "", // 🆕 Agregar DNI
     name: "",
     level: "",
     grade_level: "",
@@ -75,7 +76,13 @@ const Students = () => {
         teacher_id: parseInt(newStudent.teacher_id),
       });
       console.log("✅ Alumno creado exitosamente");
-      setNewStudent({ name: "", level: "", grade_level: "", teacher_id: "" });
+      setNewStudent({
+        dni: "",
+        name: "",
+        level: "",
+        grade_level: "",
+        teacher_id: "",
+      });
       setShowModal(false);
       loadData();
     } catch (error) {
@@ -259,7 +266,7 @@ const Students = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  ID
+                  DNI
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                   Nombre
@@ -289,7 +296,7 @@ const Students = () => {
                 filteredStudents.map((student) => (
                   <tr key={student.id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4 text-sm text-gray-900 font-medium">
-                      #{student.id}
+                      {student.dni}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                       {student.name}
@@ -339,16 +346,17 @@ const Students = () => {
             <form onSubmit={handleCreate} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre completo
+                  DNI
                 </label>
                 <input
                   type="text"
-                  value={newStudent.name}
+                  value={newStudent.dni}
                   onChange={(e) =>
-                    setNewStudent({ ...newStudent, name: e.target.value })
+                    setNewStudent({ ...newStudent, dni: e.target.value })
                   }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="Ej: Juan Pérez"
+                  placeholder="Ej: 12345678"
+                  maxLength={8}
                   required
                 />
               </div>

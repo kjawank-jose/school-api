@@ -225,3 +225,93 @@ def get_teacher_students(
             for s in students
         ]
     }
+
+@router.get("/student/{student_id}/report-card", summary="Libreta de notas acumulativa")
+def get_student_report_card(
+    student_id: int,
+    bimester: int,  # 1, 2, 3 o 4
+    db: Session = Depends(get_db),
+    current_user: UserDB = Depends(get_current_user)
+):
+    """
+    Genera la libreta de notas acumulativa del estudiante.
+    - Bimestre 1: Solo notas del 1er bimestre
+    - Bimestre 2: Notas del 1er + 2do bimestre
+    - Bimestre 3: Notas del 1er + 2do + 3er bimestre
+    - Bimestre 4: Notas de todo el año
+    """
+    if bimester < 1 or bimester > 4:
+        raise HTTPException(status_code=400, detail="El bimestre debe ser 1, 2, 3 o 4")
+    
+    student = db.query(StudentDB).filter(StudentDB.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    
+    # Verificar permisos
+    if current_user.role == RolUsuario.PARENT:
+        if current_user.student_id != student_id:
+            raise HTTPException(status_code=403, detail="No tienes permiso para ver este alumno")
+    
+    # Obtener notas de los bimestres correspondientes
+    bimesters_to_include = [f"Bimestre {i}" for i in range(1, bimester + 1)]
+    
+    grades = db.query(GradeDB).filter(
+        GradeDB.student_id == student_id,
+        GradeDB.period.in_(bimesters_to_include)
+    ).all()
+    
+    # Organizar notas por materia
+    subjects = {}
+    for grade in grades:
+        if grade.subject not in subjects:
+            subjects[grade.subject] = []
+        subjects[grade.subject].append({
+            "period": grade.period,
+            "score": grade.score,
+            "literal": get_literal_grade(grade.score)
+        })
+    
+    # Calcular promedios por materia
+    report_card = []
+    for subject, subject_grades in subjects.items():
+        total_score = sum(g["score"] for g in subject_grades)
+        average = total_score / len(subject_grades)
+        
+        report_card.append({
+            "subject": subject,
+            "grades": subject_grades,
+            "average": round(average, 2),
+            "literal": get_literal_grade(average)
+        })
+    
+    # Calcular promedio general
+    if report_card:
+        general_average = sum(r["average"] for r in report_card) / len(report_card)
+    else:
+        general_average = 0
+    
+    return {
+        "student": {
+            "id": student.id,
+            "dni": student.dni,
+            "name": student.name,
+            "level": student.level.value,
+            "grade": student.grade_level
+        },
+        "bimester": bimester,
+        "periods_included": bimesters_to_include,
+        "subjects": report_card,
+        "general_average": round(general_average, 2),
+        "general_literal": get_literal_grade(general_average)
+    }
+
+def get_literal_grade(score):
+    """Convierte nota numérica a literal (sistema MINEDU)"""
+    if score >= 18:
+        return {"literal": "AD", "label": "Logro Destacado"}
+    elif score >= 14:
+        return {"literal": "A", "label": "Logro Esperado"}
+    elif score >= 11:
+        return {"literal": "B", "label": "En Proceso"}
+    else:
+        return {"literal": "C", "label": "En Inicio"}

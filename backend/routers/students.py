@@ -12,11 +12,17 @@ def create_student(
     db: Session = Depends(get_db),
     current_user: UserDB = Depends(require_role([RolUsuario.ADMIN]))
 ):
+    # Verificar que el DNI no exista
+    existing_dni = db.query(StudentDB).filter(StudentDB.dni == student.dni).first()
+    if existing_dni:
+        raise HTTPException(status_code=400, detail="El DNI ya está registrado")
+    
     teacher = db.query(TeacherDB).filter(TeacherDB.id == student.teacher_id).first()
     if not teacher:
         raise HTTPException(status_code=404, detail="Profesor no encontrado")
     
     db_student = StudentDB(
+        dni=student.dni,  # 🆕 Agregar DNI
         name=student.name,
         level=student.level,
         grade_level=student.grade_level,
@@ -63,14 +69,12 @@ def get_all_students(
     db: Session = Depends(get_db),
     current_user: UserDB = Depends(get_current_user)
 ):
-    """
-    Lista todos los alumnos del colegio con información del profesor asignado.
-    """
     students = db.query(StudentDB).all()
     
     return [
         {
             "id": s.id,
+            "dni": s.dni,  # 🆕 Agregar DNI
             "name": s.name,
             "level": s.level.value,
             "grade_level": s.grade_level,

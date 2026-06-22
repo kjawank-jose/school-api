@@ -121,3 +121,48 @@ def get_all_users(
 @router.get("/me", response_model=UserResponse, summary="Ver información del usuario actual")
 def get_me(current_user: UserDB = Depends(get_current_user)):
     return current_user
+
+@router.post("/login/student", summary="Iniciar sesión como estudiante (DNI)")
+def login_student(
+    dni: str,
+    password: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Login de estudiantes usando su DNI como usuario.
+    La contraseña por defecto es el DNI.
+    """
+    from models import StudentDB
+    
+    student = db.query(StudentDB).filter(StudentDB.dni == dni).first()
+    
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="DNI no encontrado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # La contraseña por defecto es el DNI
+    if password != dni:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Contraseña incorrecta",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = create_access_token(
+        data={"sub": student.dni, "role": "STUDENT", "student_id": student.id}
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "student": {
+            "id": student.id,
+            "dni": student.dni,
+            "name": student.name,
+            "level": student.level.value,
+            "grade": student.grade_level
+        }
+    }
